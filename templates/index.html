@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EMNIST Character Recognizer</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="top-banner">
+            <div id="banner-left" style="display: flex; align-items: center;">
+                <img src="static/images/app-logo.png" alt="Logo" style="height: 50px; margin-left:75px; margin-right: 15px;">
+                <div style="width: 2px; height: 40px; background-color: #ccc; margin-right: 15px;"></div>
+                <span style="font-size: 24px; color: #707070;">Textify</span>
+            </div>
+            <div id="banner-right" >
+                <img src="static/images/username.png" alt="Badge Logo" style="height: 50px; margin-right: 75px;" />
+            </div>
+    </div>
+    <div class="container">
+        <p>Handwritten Character Recognition <br> You draw it, We predict it! </p> 
+        
+        <div class="row">
+            <div id="preview">
+                <canvas id="drawing-canvas" width="280" height="280"></canvas>
+            </div>
+            <div id="result" style="color: #707070; margin-left: 143px;"></div>
+        </div>
+
+        <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <div class="sidebar-button">
+                    <img src="static/images/stylo.png" alt="Draw">
+                </div>
+                <div class="sidebar-button" id="clear-btn">
+                    <img src="/static/images/erase.png" alt="Erase">
+                </div>
+                <div class="sidebar-button">
+                    <img src="/static/images/undo.png" alt="Undo">
+                </div>
+                <div class="sidebar-button">
+                    <img src="/static/images/redo.png" alt="Redo">
+                </div>
+                <div id="predict-trigger" class="sidebar-button">
+                    <img src="/static/images/evaluate.png" alt="Evaluate">
+                </div>
+            </div>
+
+    </div>
+
+    <script>
+        const form = document.getElementById('predict-trigger');
+        const resultDiv = document.getElementById('result');
+        const canvas = document.getElementById('drawing-canvas');
+        const ctx = canvas.getContext('2d');
+        const clearBtn = document.getElementById('clear-btn');
+        
+        // Drawing functionality
+        let isDrawing = false;
+        
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        
+        clearBtn.addEventListener('click', clearCanvas);
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'white';
+            
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        }
+        
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+        
+        function clearCanvas() {
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            resultDiv.textContent = '';
+        }
+        
+        // Initialize black canvas
+        clearCanvas();
+        
+        const predictTrigger = document.getElementById('predict-trigger');
+
+        predictTrigger.addEventListener('click', async () => {
+        const file = await new Promise(resolve => {
+            canvas.toBlob(blob => {
+                resolve(new File([blob], 'drawing.png'));
+            }, 'image/png');
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+
+            const prediction = await response.text();
+
+            if (!response.ok) {
+                resultDiv.textContent = `Error: ${prediction}`;
+                resultDiv.style.color = 'red';
+            } else {
+                resultDiv.textContent = `${prediction}`;
+                resultDiv.style.color = '#707070';
+                resultDiv.style.fontSize = '292px';
+                resultDiv.style.fontFamily = 'Roboto';
+                resultDiv.style.display = 'flex';
+                resultDiv.style.justifyContent = 'center';
+                resultDiv.style.alignItems = 'center';
+            }
+        } catch (error) {
+            resultDiv.textContent = `Error: ${error.message}`;
+            resultDiv.style.color = 'red';
+        }
+    });
+
+
+    </script>
+</body>
+</html>
