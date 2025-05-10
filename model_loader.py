@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from torchvision import transforms
+import torchvision.transforms.functional as F
 
 class EMNIST_CNN(nn.Module):
     # Model architecture (same as training)
@@ -39,17 +40,13 @@ class EMNIST_CNN(nn.Module):
         x = self.fc_layers(x)
         return x
 
-def load_model(path='cnn_model.pth'):
+def load_model(path='model/balanced/cnn_model.pth'):
     checkpoint = torch.load(path, map_location='cpu')
     model = EMNIST_CNN(num_classes=len(checkpoint['class_mapping']))
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
     return model, checkpoint['class_mapping']
 
-# Add these imports at the top
-import torchvision.transforms.functional as F
-
-# Modify the transform to include rotation and flip
 transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
