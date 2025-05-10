@@ -14,6 +14,18 @@ The EMNIST (Extended MNIST) dataset is an extension of the classic MNIST dataset
 
 The dataset's diversity in handwriting styles and balanced class distribution make it an ideal choice for training models to recognize handwritten characters accurately.
 
+## EMNIST Dataset Analysis Notebook
+
+For a deeper understanding of the EMNIST dataset's features and structure, refer to the included notebook titled **"EMNIST_Balanced_Dataset_Analysis_using_Exploratory_Data_Analysis.ipynb"** available in the `notebooks` folder. This notebook provides a comprehensive Exploratory Data Analysis (EDA) of the dataset, covering:
+
+- Dataset loading and basic inspection
+- Visualization of sample images
+- Analysis of class distribution
+- Normalization of pixel values
+- Key insights into the dataset's characteristics
+
+The notebook is designed to help users familiarize themselves with the dataset before proceeding with model training or further analysis. It includes detailed code snippets, visualizations, and explanations to ensure clarity and ease of use.
+
 ## Model Architecture and Overview
 
 The model is a Convolutional Neural Network (CNN) designed to handle the 28x28 grayscale images from the EMNIST dataset. The architecture consists of the following layers:
@@ -57,7 +69,7 @@ The training process includes plotting loss and accuracy curves to visualize mod
 2. **Steps**:
    - Clone the repository and install dependencies.
    - Load the dataset using the provided code, ensuring the correct transformations are applied.
-   - Train the model by running the Jupyter Notebook (`notebook/CNN_characters_model.ipynb`).
+   - Train the model by running the Jupyter Notebook (`notebooks/CNN_characters_model.ipynb`).
    - Use the saved model (`model/balanced/cnn_model.pth`) for inference in your application.
    - Deploy the canvas interface for real-time character drawing and prediction.
 
